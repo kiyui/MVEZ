@@ -75,6 +75,10 @@ class SearchActivity: Activity(), Observer<Action> {
                 .skip(1) // We can ignore initial empty event
                 .map { query -> query.toString() }
 
+        val queryClearStream: Observable<Action> = queryStream
+                .map{ query -> query.isBlank() }
+                .map{ value -> Action("show-clear", !value) }
+
         val filterStream: Observable<Action> = queryStream
                 .map { query ->
                     when (query.isBlank()) {
@@ -97,6 +101,10 @@ class SearchActivity: Activity(), Observer<Action> {
                 .withLatestFrom(queryStream, BiFunction<Int, String, String> { _, query -> query})
                 .map { value -> Action("mvez-search", value) }
 
+        val clearStream: Observable<Action> = RxView
+                .clicks(clear)
+                .map { _ -> Action("hide-clear", apps) }
+
         // Apply side-effects for intents
         filterStream
                 .subscribeOn(Schedulers.newThread())
@@ -104,7 +112,8 @@ class SearchActivity: Activity(), Observer<Action> {
                 .subscribe(this)
 
         val updateAppStream = Observable.merge(changeAppsStream, filterStream)
-        Observable.merge(updateAppStream)
+        val clearQueryStream = Observable.merge(queryClearStream, clearStream)
+        Observable.merge(updateAppStream, searchStream, clearQueryStream)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
 
@@ -165,10 +174,21 @@ class SearchActivity: Activity(), Observer<Action> {
         }
 
         when (t.name) {
+            "show-clear" -> {
+                clear.visibility = when (t.value as Boolean) {
+                    true -> View.VISIBLE
+                    false -> View.GONE
+                }
+            }
             "update-apps" -> {
                 setApps(t.value as List<AppDetail>)
             }
             "mvez-search" -> {
+            }
+            "hide-clear" -> {
+                clear.visibility = View.GONE
+                search.text.clear()
+                setApps(t.value as List<AppDetail>)
             }
             else -> {
                 val type = t.name
