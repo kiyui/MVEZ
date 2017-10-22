@@ -31,6 +31,8 @@ class SearchActivity: Activity(), Observer<Action> {
     private lateinit var appGrid: GridView
     private lateinit var search: EditText
     private lateinit var clear: ImageButton
+    private lateinit var packageSource: PackageChangeSource
+    private val filter = IntentFilter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,14 +56,13 @@ class SearchActivity: Activity(), Observer<Action> {
 
         // Create an app change broadcast receiver so we have a source
         // for when an application is installed/uninstalled/updated
-        val filter = IntentFilter()
         filter.addAction(Intent.ACTION_PACKAGE_ADDED)
         filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED)
         filter.addAction(Intent.ACTION_PACKAGE_REPLACED)
         filter.addDataScheme("package")
 
-        val packageSource = PackageChangeSource()
+        packageSource = PackageChangeSource()
         registerReceiver(packageSource, filter)
 
         // Intents
@@ -148,6 +149,20 @@ class SearchActivity: Activity(), Observer<Action> {
                     }
                 })
 
+    }
+
+
+    /**
+     * Handle registration of receiver
+     */
+    override fun onPause() {
+        unregisterReceiver(packageSource)
+        super.onPause()
+    }
+
+    override fun onResume() {
+        registerReceiver(packageSource, filter)
+        super.onResume()
     }
 
     /**
