@@ -66,19 +66,16 @@ class SearchActivity: Activity(), Observer<Action> {
         registerReceiver(packageSource, filter)
 
         // Intents
-        val changeAppsStream: Observable<Action> = packageSource
-                .changeStream
-                .map { _ -> getApps() }
-                .map { apps -> Action("update-apps", apps) }
-
         val queryStream: Observable<String> = RxTextView
                 .textChanges(search)
                 .skip(1) // We can ignore initial empty event
                 .map { query -> query.toString() }
 
-        val queryClearStream: Observable<Action> = queryStream
-                .map{ query -> query.isBlank() }
-                .map{ value -> Action("show-clear", !value) }
+        // Action intents
+        val changeAppsStream: Observable<Action> = packageSource
+                .changeStream
+                .map { _ -> getApps() }
+                .map { apps -> Action("update-apps", apps) }
 
         val filterStream: Observable<Action> = queryStream
                 .map { query ->
@@ -102,6 +99,10 @@ class SearchActivity: Activity(), Observer<Action> {
                 .withLatestFrom(queryStream, BiFunction<Int, String, String> { _, query -> query})
                 .map { value -> Action("mvez-search", value) }
 
+        val queryClearStream: Observable<Action> = queryStream
+                .map{ query -> query.isBlank() }
+                .map{ value -> Action("show-clear", !value) }
+
         val clearStream: Observable<Action> = RxView
                 .clicks(clear)
                 .map { _ -> Action("hide-clear", apps) }
@@ -111,7 +112,7 @@ class SearchActivity: Activity(), Observer<Action> {
                 .map { event -> event.position() }
                 .map { value -> Action("app-launch", value) }
 
-        val appInformationStream: Observable<Action> = RxAdapterView
+        val appDetailStream: Observable<Action> = RxAdapterView
                 .itemLongClickEvents(appGrid)
                 .map { event -> event.position() }
                 .map { value -> Action("app-information", value) }
@@ -122,10 +123,16 @@ class SearchActivity: Activity(), Observer<Action> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
 
-        val updateAppStream = Observable.merge(changeAppsStream, filterStream)
-        val clearQueryStream = Observable.merge(queryClearStream, clearStream)
-        val appStream = Observable.merge(appLaunchStream, appInformationStream)
-        Observable.merge(updateAppStream, searchStream, clearQueryStream, appStream)
+        Observable
+                .merge(listOf(
+                        changeAppsStream,   // update-apps
+                        filterStream,       // update-apps
+                        searchStream,       // mvez-search
+                        queryClearStream,   // show-clear
+                        clearStream,        // hide-clear
+                        appLaunchStream,    // app-launch
+                        appDetailStream     // app-detail
+                ))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
 
@@ -200,28 +207,34 @@ class SearchActivity: Activity(), Observer<Action> {
         }
 
         when (t.name) {
+            "update-apps" -> {
+                // Update the GridView with a new set of applications
+                setApps(t.value as List<AppDetail>)
+            }
+            "mvez-search" -> {
+            }
             "show-clear" -> {
+                // Toggle the visibility of the clear button based on length of text input
                 clear.visibility = when (t.value as Boolean) {
                     true -> View.VISIBLE
                     false -> View.GONE
                 }
             }
-            "update-apps" -> {
-                setApps(t.value as List<AppDetail>)
-            }
-            "mvez-search" -> {
-            }
             "hide-clear" -> {
+                // Clear the current search term and reset application list when clear pressed
                 clear.visibility = View.GONE
                 search.text.clear()
                 setApps(t.value as List<AppDetail>)
             }
             "app-launch" -> {
+                // Launch the clicked application
                 val app = adapter.getItem(t.value as Int)
                 val intent = packageManager.getLaunchIntentForPackage(app.name.toString())
                 this@SearchActivity.startActivity(intent)
             }
             "app-information" -> {
+                // Open details for the application
+                // TODO: Review using a context menu, new feature in Oreo
                 val app = adapter.getItem(t.value as Int)
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 intent.data = Uri.parse("package:" + app.name.toString())
