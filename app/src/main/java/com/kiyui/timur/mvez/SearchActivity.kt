@@ -105,6 +105,16 @@ class SearchActivity: Activity(), Observer<Action> {
                 .clicks(clear)
                 .map { _ -> Action("hide-clear", apps) }
 
+        val appLaunchStream: Observable<Action> = RxAdapterView
+                .itemClickEvents(appGrid)
+                .map { event -> event.position() }
+                .map { value -> Action("app-launch", value) }
+
+        val appInformationStream: Observable<Action> = RxAdapterView
+                .itemLongClickEvents(appGrid)
+                .map { event -> event.position() }
+                .map { value -> Action("app-information", value) }
+
         // Apply side-effects for intents
         filterStream
                 .subscribeOn(Schedulers.newThread())
@@ -113,7 +123,8 @@ class SearchActivity: Activity(), Observer<Action> {
 
         val updateAppStream = Observable.merge(changeAppsStream, filterStream)
         val clearQueryStream = Observable.merge(queryClearStream, clearStream)
-        Observable.merge(updateAppStream, searchStream, clearQueryStream)
+        val appStream = Observable.merge(appLaunchStream, appInformationStream)
+        Observable.merge(updateAppStream, searchStream, clearQueryStream, appStream)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
 
@@ -189,6 +200,17 @@ class SearchActivity: Activity(), Observer<Action> {
                 clear.visibility = View.GONE
                 search.text.clear()
                 setApps(t.value as List<AppDetail>)
+            }
+            "app-launch" -> {
+                val app = adapter.getItem(t.value as Int)
+                val intent = packageManager.getLaunchIntentForPackage(app.name.toString())
+                this@SearchActivity.startActivity(intent)
+            }
+            "app-information" -> {
+                val app = adapter.getItem(t.value as Int)
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.data = Uri.parse("package:" + app.name.toString())
+                this@SearchActivity.startActivity(intent)
             }
             else -> {
                 val type = t.name
