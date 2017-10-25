@@ -31,6 +31,7 @@ class SearchActivity: Activity(), Observer<Action> {
     private lateinit var appGrid: GridView
     private lateinit var search: EditText
     private lateinit var clear: ImageButton
+    private lateinit var settings: ImageButton
     private lateinit var packageSource: PackageChangeSource
     private val filter = IntentFilter()
 
@@ -53,6 +54,7 @@ class SearchActivity: Activity(), Observer<Action> {
         appGrid = findViewById(R.id.appsContainer)
         search = findViewById(R.id.action_search)
         clear = findViewById(R.id.clear_button)
+        settings = findViewById(R.id.overflow_button)
 
         // Create an app change broadcast receiver so we have a source
         // for when an application is installed/uninstalled/updated
@@ -117,6 +119,10 @@ class SearchActivity: Activity(), Observer<Action> {
                 .map { event -> event.position() }
                 .map { value -> Action("app-information", value) }
 
+        val settingsStream: Observable<Action> = RxView
+                .clicks(settings)
+                .map { _ -> Action("app-settings", true) }
+
         // Apply side-effects for intents
         filterStream
                 .subscribeOn(Schedulers.newThread())
@@ -131,7 +137,8 @@ class SearchActivity: Activity(), Observer<Action> {
                         queryClearStream,   // show-clear
                         clearStream,        // hide-clear
                         appLaunchStream,    // app-launch
-                        appDetailStream     // app-detail
+                        appDetailStream,    // app-detail
+                        settingsStream      // app-settings
                 ))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
@@ -238,6 +245,10 @@ class SearchActivity: Activity(), Observer<Action> {
                 val app = adapter.getItem(t.value as Int)
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 intent.data = Uri.parse("package:" + app.name.toString())
+                this@SearchActivity.startActivity(intent)
+            }
+            "app-settings" -> {
+                val intent = Intent(this, SettingsActivity::class.java)
                 this@SearchActivity.startActivity(intent)
             }
             else -> {
