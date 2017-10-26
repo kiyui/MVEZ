@@ -1,6 +1,7 @@
 package com.kiyui.timur.mvez
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
@@ -20,6 +21,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import com.f2prateek.rx.preferences2.RxSharedPreferences
+
+
 
 /**
  * Main launcher application handling all application logic
@@ -44,11 +48,20 @@ class SearchActivity: Activity(), Observer<Action> {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
+        // Application preferences
+        val preferences = getSharedPreferences("MVEZ", Context.MODE_PRIVATE)
+        val manager = PreferenceManager(preferences)
+        val preferenceStream = RxSharedPreferences.create(preferences)
+
         // Initialize application
         var apps: List<AppDetail> = getApps()
 
         // We initialize out adapter with a mutable list since we need to modify it when searching
-        adapter = AppDetailAdapter(this, R.layout.app_item, apps.toMutableList())
+        adapter = AppDetailAdapter(
+                this,
+                R.layout.app_item,
+                apps.toMutableList(),
+                manager.get("alphabetical") as Boolean)
 
         // View items
         appGrid = findViewById(R.id.appsContainer)
@@ -72,6 +85,12 @@ class SearchActivity: Activity(), Observer<Action> {
                 .textChanges(search)
                 .skip(1) // We can ignore initial empty event
                 .map { query -> query.toString() }
+
+        // Preference action intents
+        val alphabeticalPreferenceStream: Observable<Action> = preferenceStream
+                .getBoolean("alphabetical")
+                .asObservable()
+                .map { value -> Action("pref-alphabetical", value) }
 
         // Action intents
         val changeAppsStream: Observable<Action> = packageSource
@@ -124,15 +143,21 @@ class SearchActivity: Activity(), Observer<Action> {
                 .map { _ -> Action("app-settings", true) }
 
         // Apply side-effects for intents
-        filterStream
+        Observable
+                .merge(listOf(
+                        // Preferences
+                        alphabeticalPreferenceStream,
+                        // Actions
+                        filterStream       // update-apps
+                ))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
 
         Observable
                 .merge(listOf(
+                        // Actions
                         changeAppsStream,   // update-apps
-                        filterStream,       // update-apps
                         searchStream,       // mvez-search
                         queryClearStream,   // show-clear
                         clearStream,        // hide-clear
@@ -214,6 +239,10 @@ class SearchActivity: Activity(), Observer<Action> {
         }
 
         when (t.name) {
+            "pref-alphabetical" -> {
+                adapter.setAlphabetical(t.value as Boolean)
+                adapter.notifyDataSetChanged()
+            }
             "update-apps" -> {
                 // Update the GridView with a new set of applications
                 setApps(t.value as List<AppDetail>)
