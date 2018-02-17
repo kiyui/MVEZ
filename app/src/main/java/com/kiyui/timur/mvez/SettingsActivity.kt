@@ -12,11 +12,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
 class SettingsActivity : Activity(), Observer<Action> {
-    private lateinit var alphabetical: CheckBox
-    private lateinit var appSpinner: Spinner
-    private lateinit var bangText: EditText
-    private lateinit var bangButton: Button
-    private lateinit var bangList: ListView
+    private val alphabetical by lazy { findViewById<CheckBox>(R.id.settingsAlphabetical) }
+    private val appSpinner by lazy { findViewById<Spinner>(R.id.searchSpinner) }
+    private val bangText by lazy { findViewById<EditText>(R.id.bangValue) }
+    private val bangButton by lazy { findViewById<Button>(R.id.bangSubmit) }
+    private val bangList by lazy { findViewById<ListView>(R.id.bangList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +32,6 @@ class SettingsActivity : Activity(), Observer<Action> {
         // Application preferences
         val preferences = getSharedPreferences("MVEZ", Context.MODE_PRIVATE)
         val manager = PreferenceManager(preferences)
-
-        // View items
-        alphabetical = findViewById(R.id.settingsAlphabetical)
-        appSpinner = findViewById(R.id.searchSpinner)
-        bangText = findViewById(R.id.bangValue)
-        bangButton = findViewById(R.id.bangSubmit)
-        bangList = findViewById(R.id.bangList)
 
         appSpinner.adapter = ArrayAdapter<String>(
                 this,

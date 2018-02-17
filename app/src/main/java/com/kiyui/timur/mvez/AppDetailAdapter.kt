@@ -14,10 +14,7 @@ import android.widget.TextView
  * that understands how to populate our `app_item` layout with the data
  * encapsulated inside our `AppDetail` class
  */
-class AppDetailAdapter(context: Context, resource: Int, apps: List<AppDetail>, alphabetical: Boolean): ArrayAdapter<AppDetail>(context, resource, apps), SectionIndexer {
-    private val apps: List<AppDetail> = apps
-    private var alphabetical: Boolean = alphabetical
-
+class AppDetailAdapter(context: Context, resource: Int, val apps: List<AppDetail>, var alphabetical: Boolean): ArrayAdapter<AppDetail>(context, resource, apps), SectionIndexer {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val appView: View = when (convertView == null) {
@@ -31,10 +28,6 @@ class AppDetailAdapter(context: Context, resource: Int, apps: List<AppDetail>, a
         appLabel.text = apps[position].label
 
         return appView
-    }
-
-    fun setAlphabetical (value: Boolean) {
-        alphabetical = value
     }
 
     /**

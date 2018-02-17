@@ -2,8 +2,7 @@ package com.kiyui.timur.mvez
 
 import android.content.SharedPreferences
 
-class PreferenceManager(preferences: SharedPreferences) {
-    private val preferences: SharedPreferences = preferences
+class PreferenceManager(val preferences: SharedPreferences) {
 
     fun get (key: String): Any {
         return when (key) {

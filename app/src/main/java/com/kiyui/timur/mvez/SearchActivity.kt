@@ -32,11 +32,11 @@ import com.f2prateek.rx.preferences2.RxSharedPreferences
  */
 class SearchActivity: Activity(), Observer<Action> {
     private lateinit var adapter: AppDetailAdapter
-    private lateinit var appGrid: GridView
-    private lateinit var search: EditText
-    private lateinit var clear: ImageButton
-    private lateinit var settings: ImageButton
-    private lateinit var packageSource: PackageChangeSource
+    private val appGrid by lazy { findViewById<GridView>(R.id.appsContainer) }
+    private val search by lazy { findViewById<EditText>(R.id.action_search) }
+    private val clear by lazy { findViewById<ImageButton>(R.id.clear_button) }
+    private val settings by lazy { findViewById<ImageButton>(R.id.overflow_button) }
+    private val packageSource = PackageChangeSource()
     private val filter = IntentFilter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,10 +64,7 @@ class SearchActivity: Activity(), Observer<Action> {
                 manager.get("alphabetical") as Boolean)
 
         // View items
-        appGrid = findViewById(R.id.appsContainer)
-        search = findViewById(R.id.action_search)
-        clear = findViewById(R.id.clear_button)
-        settings = findViewById(R.id.overflow_button)
+
 
         // Create an app change broadcast receiver so we have a source
         // for when an application is installed/uninstalled/updated
@@ -77,7 +74,6 @@ class SearchActivity: Activity(), Observer<Action> {
         filter.addAction(Intent.ACTION_PACKAGE_REPLACED)
         filter.addDataScheme("package")
 
-        packageSource = PackageChangeSource()
         registerReceiver(packageSource, filter)
 
         // Intents
@@ -240,7 +236,7 @@ class SearchActivity: Activity(), Observer<Action> {
 
         when (t.name) {
             "pref-alphabetical" -> {
-                adapter.setAlphabetical(t.value as Boolean)
+                adapter.alphabetical = t.value as Boolean
                 adapter.notifyDataSetChanged()
             }
             "update-apps" -> {
