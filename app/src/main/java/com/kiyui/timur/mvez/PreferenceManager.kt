@@ -5,6 +5,13 @@ import com.google.gson.Gson
 
 class PreferenceManager(private val preferences: SharedPreferences) {
     private val gson: Gson = Gson()
+    private val mvezPreferences by lazy {
+        val savedPreferences = gson.fromJson(preferences.getString("mvez", ""), MVEZPreferences::class.java)
+        when (savedPreferences) {
+            null -> MVEZPreferences()
+            else -> savedPreferences
+        }
+    }
 
     fun get (key: String): Any {
         return when (key) {
@@ -12,11 +19,7 @@ class PreferenceManager(private val preferences: SharedPreferences) {
                 preferences.getBoolean(key, false)
             }
             "mvez" -> {
-                val savedPreferences = gson.fromJson(preferences.getString("mvez", ""), MVEZPreferences::class.java)
-                when (savedPreferences) {
-                    null -> MVEZPreferences()
-                    else -> savedPreferences
-                }
+                mvezPreferences
             }
             else -> {
                 throw Error("Invalid preference key!")
@@ -24,29 +27,32 @@ class PreferenceManager(private val preferences: SharedPreferences) {
         }
     }
 
-    fun set (key: String, value: Any) {
-        when (key) {
+    fun set (key: String, value: Any): Boolean {
+        return when (key) {
             "alphabetical" -> {
                 preferences
                         .edit()
                         .putBoolean(key, value as Boolean)
                         .apply()
+                true
             }
             "mvez-add" -> {
-                val savedPreferences = gson.fromJson(preferences.getString("mvez", ""), MVEZPreferences::class.java)
-                val mvezPreferences = when (savedPreferences) {
-                    null -> MVEZPreferences()
-                    else -> savedPreferences
+                val success = mvezPreferences.add(value as MVEZ)
+                if (success) {
+                    preferences
+                            .edit()
+                            .putString("mvez", gson.toJson(mvezPreferences))
+                            .apply()
                 }
-
-                mvezPreferences.add(value as MVEZ)
-                preferences
-                        .edit()
-                        .putString("mvez", gson.toJson(mvezPreferences))
-                        .apply()
+                success
+            }
+            "mvez-remove" -> {
+                mvezPreferences.remove(value as Int)
+                true
             }
             else -> {
                 throw Error("Invalid preference key!")
+                false
             }
         }
     }

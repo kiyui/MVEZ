@@ -19,6 +19,10 @@ open class MVEZ constructor(private val shortcut: String, private val applicatio
         }
     }
 
+    fun equals(other: MVEZ): Boolean {
+        return this.toString() == other.toString()
+    }
+
     fun performAction () {
         println("doing $action")
     }

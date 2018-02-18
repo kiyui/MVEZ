@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.*
 import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxAdapterView
 import com.jakewharton.rxbinding2.widget.RxCompoundButton
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -17,6 +18,7 @@ class SettingsActivity : Activity(), Observer<Action> {
     private lateinit var adapter: ArrayAdapter<String>
     private val manager by lazy { PreferenceManager(getSharedPreferences("MVEZ", Context.MODE_PRIVATE)) }
     private val mvezPreferences by lazy { manager.get("mvez") as MVEZPreferences }
+    private val mvezPreferenceList by lazy { mvezPreferences.getLabels().toMutableList() }
     private val alphabetical by lazy { findViewById<CheckBox>(R.id.settingsAlphabetical) }
     private val appSpinner by lazy { findViewById<Spinner>(R.id.searchSpinner) }
     private val bangText by lazy { findViewById<EditText>(R.id.bangValue) }
@@ -34,7 +36,7 @@ class SettingsActivity : Activity(), Observer<Action> {
         adapter = ArrayAdapter(
                 this,
                 android.R.layout.simple_spinner_dropdown_item,
-                mvezPreferences.getLabels().toMutableList())
+                mvezPreferenceList)
 
         // Initialize lists
         val searchApps = getAppsForIntent(Intent.ACTION_WEB_SEARCH) + getAppsForIntent(Intent.ACTION_SEARCH)
@@ -58,11 +60,16 @@ class SettingsActivity : Activity(), Observer<Action> {
                 }
                 .filter{ action -> (action.value as MVEZ).isNotEmpty() }
 
+        val deleteBangStream: Observable<Action> = RxAdapterView
+                .itemLongClickEvents(bangList)
+                .map { item -> Action("settings-mvez-remove", item.position()) }
+
         // Apply side-effects for intents
         Observable
                 .merge(listOf(
                         alphabeticalStream,
-                        createBangStream
+                        createBangStream,
+                        deleteBangStream
                 ))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
@@ -94,8 +101,23 @@ class SettingsActivity : Activity(), Observer<Action> {
             }
             "settings-mvez-add" -> {
                 val mvez = t.value as MVEZ
-                manager.set("mvez-add", mvez)
-                adapter.add(mvez.toString())
+                val success = manager.set("mvez-add", mvez)
+                when (success) {
+                    true -> {
+                        mvezPreferenceList.add(mvez.toString())
+                        adapter.notifyDataSetChanged()
+                    }
+                    false -> {
+                        // TODO: Show toast
+                        println("Failed to add duplicate mvez")
+                    }
+                }
+            }
+            "settings-mvez-remove" -> {
+                val index = t.value as Int
+                manager.set("mvez-remove", index)
+                mvezPreferenceList.removeAt(index)
+                adapter.notifyDataSetChanged()
             }
             else -> {
                 val type = t.name

@@ -7,8 +7,16 @@ import java.util.*
  */
 class MVEZPreferences {
     private val preferences: Vector<MVEZ> = Vector()
-    fun add (preference: MVEZ) {
-        preferences.add(preference)
+    fun add (mvez: MVEZ): Boolean {
+        if (!preferences.fold(false, { acc, preference -> acc || preference.equals(mvez) })) {
+            preferences.add(mvez)
+            return true
+        }
+        return false
+    }
+
+    fun remove (index: Int) {
+        preferences.removeAt(index)
     }
 
     fun getLabels (): List<String> {
