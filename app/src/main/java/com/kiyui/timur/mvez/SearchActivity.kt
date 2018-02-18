@@ -1,6 +1,8 @@
 package com.kiyui.timur.mvez
 
 import android.app.Activity
+import android.app.SearchManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -22,6 +24,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.google.gson.Gson
 
 /**
  * Main launcher application handling all application logic
@@ -29,7 +32,9 @@ import com.f2prateek.rx.preferences2.RxSharedPreferences
  * We implement `Observer<Action>` to handle all side effects reactively
  */
 class SearchActivity: Activity(), Observer<Action> {
+    private val gson: Gson = Gson()
     private lateinit var adapter: AppDetailAdapter
+    private lateinit var mvezPreferences: MVEZPreferences
     private val appGrid by lazy { findViewById<GridView>(R.id.appsContainer) }
     private val search by lazy { findViewById<EditText>(R.id.action_search) }
     private val clear by lazy { findViewById<ImageButton>(R.id.clear_button) }
@@ -50,6 +55,7 @@ class SearchActivity: Activity(), Observer<Action> {
         val preferences = getSharedPreferences("MVEZ", Context.MODE_PRIVATE)
         val manager = PreferenceManager(preferences)
         val preferenceStream = RxSharedPreferences.create(preferences)
+        mvezPreferences = manager.get("mvez") as MVEZPreferences
 
         // Initialize application
         var apps: List<AppDetail> = getApps()
@@ -82,6 +88,13 @@ class SearchActivity: Activity(), Observer<Action> {
                 .getBoolean("alphabetical")
                 .asObservable()
                 .map { value -> Action("pref-alphabetical", value) }
+
+        val mvezPreferenceStream: Observable<Action> = preferenceStream
+                .getString("mvez")
+                .asObservable()
+                .map { value ->
+                    Action("pref-mvez", gson.fromJson(value, MVEZPreferences::class.java))
+                }
 
         // Action intents
         val changeAppsStream: Observable<Action> = packageSource
@@ -138,6 +151,7 @@ class SearchActivity: Activity(), Observer<Action> {
                 .merge(listOf(
                         // Preferences
                         alphabeticalPreferenceStream,
+                        mvezPreferenceStream,
                         // Actions
                         filterStream       // update-apps
                 ))
@@ -234,11 +248,43 @@ class SearchActivity: Activity(), Observer<Action> {
                 adapter.alphabetical = t.value as Boolean
                 adapter.notifyDataSetChanged()
             }
+            "pref-mvez" -> {
+                mvezPreferences = t.value as MVEZPreferences
+            }
             "update-apps" -> {
                 // Update the GridView with a new set of applications
                 setApps(t.value as List<AppDetail>)
             }
             "mvez-search" -> {
+                val query = t.value as String
+                val mvez = mvezPreferences.getActionableMVEZ(query)
+                when (mvez) {
+                    null -> {
+                        val intent = Intent()
+                        intent.action = Intent.ACTION_WEB_SEARCH
+                        intent.putExtra(SearchManager.QUERY, query)
+
+                        try {
+                            this@SearchActivity.startActivity(intent)
+                        } catch ( e: ActivityNotFoundException ) {
+                            // TODO: Show toast to show disappointment
+                            println(e)
+                        }
+                    }
+                    else -> {
+                        val filteredQuery = mvez.stripShortcut(query)
+                        val intent = Intent()
+                        intent.action = mvez.action
+                        intent.putExtra(SearchManager.QUERY, filteredQuery)
+                        intent.`package` = mvez.application
+                        try {
+                            this@SearchActivity.startActivity(intent)
+                        } catch ( e: ActivityNotFoundException ) {
+                            // TODO: Show toast to show disappointment
+                            println(e)
+                        }
+                    }
+                }
             }
             "show-clear" -> {
                 // Toggle the visibility of the clear button based on length of text input
