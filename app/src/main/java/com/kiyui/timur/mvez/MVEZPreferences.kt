@@ -22,4 +22,11 @@ class MVEZPreferences {
     fun getLabels (): List<String> {
         return preferences.map { mvez -> mvez.toString() }
     }
+
+    fun getActionableMVEZ (query: String): MVEZ? {
+       return preferences.findLast { preference ->
+           val stripped = preference.stripShortcut(query)
+           stripped != query
+       }
+    }
 }
