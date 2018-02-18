@@ -11,7 +11,7 @@ I also wanted to cut down on the features that MUEZ had inherited from its origi
 ## features
 - [x] Application search filter
 - [x] Named overlay scrolling
-- [ ] Settings activity
+- [x] Settings activity
 - [ ] !Bang search syntax
 
 ## support
