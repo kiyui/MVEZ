@@ -61,9 +61,6 @@ class SearchActivity: Activity(), Observer<Action> {
                 apps.toMutableList(),
                 manager.get("alphabetical") as Boolean)
 
-        // View items
-
-
         // Create an app change broadcast receiver so we have a source
         // for when an application is installed/uninstalled/updated
         filter.addAction(Intent.ACTION_PACKAGE_ADDED)

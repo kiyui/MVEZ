@@ -12,7 +12,11 @@ class PreferenceManager(private val preferences: SharedPreferences) {
                 preferences.getBoolean(key, false)
             }
             "mvez" -> {
-                gson.fromJson(preferences.getString(key, ""), MVEZPreferences::class.java)
+                val savedPreferences = gson.fromJson(preferences.getString("mvez", ""), MVEZPreferences::class.java)
+                when (savedPreferences) {
+                    null -> MVEZPreferences()
+                    else -> savedPreferences
+                }
             }
             else -> {
                 throw Error("Invalid preference key!")

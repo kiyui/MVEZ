@@ -10,4 +10,8 @@ class MVEZPreferences {
     fun add (preference: MVEZ) {
         preferences.add(preference)
     }
+
+    fun getLabels (): List<String> {
+        return preferences.map { mvez -> mvez.toString() }
+    }
 }
