@@ -12,7 +12,7 @@ I also wanted to cut down on the features that MUEZ had inherited from its origi
 - [x] Application search filter
 - [x] Named overlay scrolling
 - [x] Settings activity
-- [ ] !Bang search syntax
+- [x] !Bang search syntax
 
 ## support
 Android Nougat++
