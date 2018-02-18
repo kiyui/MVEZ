@@ -23,8 +23,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 
-
-
 /**
  * Main launcher application handling all application logic
  * All application intents are in the form of `Observable<Action>`

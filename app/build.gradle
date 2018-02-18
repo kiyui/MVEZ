@@ -36,4 +36,5 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.5'
     compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     compile 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3'
+    compile 'com.google.code.gson:gson:2.8.2'
 }

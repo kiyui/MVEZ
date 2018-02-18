@@ -1,13 +1,18 @@
 package com.kiyui.timur.mvez
 
 import android.content.SharedPreferences
+import com.google.gson.Gson
 
-class PreferenceManager(val preferences: SharedPreferences) {
+class PreferenceManager(private val preferences: SharedPreferences) {
+    private val gson: Gson = Gson()
 
     fun get (key: String): Any {
         return when (key) {
             "alphabetical" -> {
                 preferences.getBoolean(key, false)
+            }
+            "mvez" -> {
+                gson.fromJson(preferences.getString(key, ""), MVEZPreferences::class.java)
             }
             else -> {
                 throw Error("Invalid preference key!")
@@ -21,6 +26,19 @@ class PreferenceManager(val preferences: SharedPreferences) {
                 preferences
                         .edit()
                         .putBoolean(key, value as Boolean)
+                        .apply()
+            }
+            "mvez-add" -> {
+                val savedPreferences = gson.fromJson(preferences.getString("mvez", ""), MVEZPreferences::class.java)
+                val mvezPreferences = when (savedPreferences) {
+                    null -> MVEZPreferences()
+                    else -> savedPreferences
+                }
+
+                mvezPreferences.add(value as MVEZ)
+                preferences
+                        .edit()
+                        .putString("mvez", gson.toJson(mvezPreferences))
                         .apply()
             }
             else -> {

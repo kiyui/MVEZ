@@ -5,11 +5,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.*
+import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxCompoundButton
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : Activity(), Observer<Action> {
     private val alphabetical by lazy { findViewById<CheckBox>(R.id.settingsAlphabetical) }
@@ -26,17 +28,14 @@ class SettingsActivity : Activity(), Observer<Action> {
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Initialize activity
-        val searchApps = getWebSearchIntents() + getSearchIntents()
-        val searchAppNames = searchApps.map { app -> app.label.toString() }
+        val searchApps = getAppsForIntent(Intent.ACTION_WEB_SEARCH) + getAppsForIntent(Intent.ACTION_SEARCH)
 
         // Application preferences
         val preferences = getSharedPreferences("MVEZ", Context.MODE_PRIVATE)
         val manager = PreferenceManager(preferences)
 
-        appSpinner.adapter = ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                searchAppNames)
+        val appIntentAdapter = AppIntentAdapter(this, searchApps)
+        appSpinner.adapter = appIntentAdapter
 
         // Intents
         val alphabeticalStream: Observable<Action> = RxCompoundButton
@@ -45,41 +44,35 @@ class SettingsActivity : Activity(), Observer<Action> {
                 .startWith(manager.get("alphabetical") as Boolean)
                 .map { value -> Action("settings-checked", value ) }
 
+        val createBangStream: Observable<Action> = RxView
+                .clicks(bangButton)
+                .map { _ ->
+                    val appIntent = appIntentAdapter.getItemAtPosition(searchSpinner.selectedItemPosition)
+                    val mvez = MVEZ(bangText.text.toString(), appIntent.name.toString(), appIntent.action)
+                    println(searchSpinner.selectedItem)
+                    Action("settings-mvez-add", mvez )
+                }
+                .filter{ action -> (action.value as MVEZ).isNotEmpty() }
+
         // Apply side-effects for intents
         Observable
                 .merge(listOf(
-                        alphabeticalStream
+                        alphabeticalStream,
+                        createBangStream
                 ))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
     }
 
-    /**
-     * Get applications that implement a web search intent
-     */
-    private fun getWebSearchIntents (): List<AppBase> {
+    private fun getAppsForIntent(action: String): List<AppIntent> {
         val intent = Intent()
-        intent.action = Intent.ACTION_WEB_SEARCH
+        intent.action = action
         return packageManager
                 .queryIntentActivities(intent, 0)
                 .map { ri ->
                     val label = ri.loadLabel(packageManager)
                     val name = ri.activityInfo.packageName
-                    AppBase(label, name) }
-    }
-
-    /**
-     * Get applications that implement a general search intent
-     */
-    private fun getSearchIntents (): List<AppBase> {
-        val intent = Intent()
-        intent.action = Intent.ACTION_SEARCH
-        return packageManager
-                .queryIntentActivities(intent, 0)
-                .map { ri ->
-                    val label = ri.loadLabel(packageManager)
-                    val name = ri.activityInfo.packageName
-                    AppBase(label, name) }
+                    AppIntent(label, name, action) }
     }
 
     override fun onSubscribe(d: Disposable) {
@@ -95,6 +88,10 @@ class SettingsActivity : Activity(), Observer<Action> {
                 if (value != manager.get("alphabetical")) {
                     manager.set("alphabetical", value)
                 }
+            }
+            "settings-mvez-add" -> {
+                manager.set("mvez-add", t.value)
+                // TODO: Update view
             }
             else -> {
                 val type = t.name
