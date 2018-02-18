@@ -3,7 +3,7 @@ package com.kiyui.timur.mvez
 /**
  * Created by timur on 11/15/17.
  */
-open class MVEZ constructor(private val shortcut: String, private val application: String, private val action: String) {
+open class MVEZ constructor(val shortcut: String, val application: String, val action: String) {
     fun isNotEmpty(): Boolean {
         return shortcut.isNotEmpty() && application.isNotEmpty()
     }
@@ -23,7 +23,7 @@ open class MVEZ constructor(private val shortcut: String, private val applicatio
         return this.toString() == other.toString()
     }
 
-    fun performAction () {
-        println("doing $action")
+    fun stripShortcut (query: String): String {
+        return query.replace(Regex("^!$shortcut\\s*|\\s*!$shortcut\\s*$"), "")
     }
 }
