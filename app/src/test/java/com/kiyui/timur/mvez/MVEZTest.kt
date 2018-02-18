@@ -12,6 +12,22 @@ class MVEZTest {
     private val query = "I am a fake search"
 
     @Test
+    fun equalCompareTrue() {
+        val mvezA = MVEZ("g", application, action)
+        val mvezB = MVEZ("g", application, action)
+        assertTrue(mvezA.equals(mvezB))
+        assertTrue(mvezB.equals(mvezA))
+    }
+
+    @Test
+    fun equalCompareFalse() {
+        val mvezA = MVEZ("a", application, action)
+        val mvezB = MVEZ("b", application, action)
+        assertFalse(mvezA.equals(mvezB))
+        assertFalse(mvezB.equals(mvezA))
+    }
+
+    @Test
     fun prefixReplace() {
         val mvez = MVEZ("g", application, action)
         val result = mvez.stripShortcut("!g $query")
