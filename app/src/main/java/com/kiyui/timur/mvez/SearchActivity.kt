@@ -100,7 +100,7 @@ class SearchActivity: Activity(), Observer<Action> {
         val changeAppsStream: Observable<Action> = packageSource
                 .changeStream
                 .map { _ -> getApps() }
-                .map { apps -> Action("update-apps", apps) }
+                .map { newApps -> Action("update-apps", newApps) }
 
         val filterStream: Observable<Action> = queryStream
                 .map { query ->
@@ -239,10 +239,6 @@ class SearchActivity: Activity(), Observer<Action> {
     }
 
     override fun onNext(t: Action) {
-        if (adapter == null || t.value == null) {
-            return
-        }
-
         when (t.name) {
             "pref-alphabetical" -> {
                 adapter.alphabetical = t.value as Boolean
@@ -252,7 +248,7 @@ class SearchActivity: Activity(), Observer<Action> {
                 mvezPreferences = t.value as MVEZPreferences
             }
             "update-apps" -> {
-                // Update the GridView with a new set of applications
+                // Update the GridView with a new updateState of applications
                 setApps(t.value as List<AppDetail>)
             }
             "mvez-search" -> {

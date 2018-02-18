@@ -27,32 +27,26 @@ class PreferenceManager(private val preferences: SharedPreferences) {
         }
     }
 
-    fun set (key: String, value: Any): Boolean {
-        return when (key) {
+    fun updateState(reducerName: String, value: Any): Boolean {
+        return when (reducerName) {
             "alphabetical" -> {
-                preferences
-                        .edit()
-                        .putBoolean(key, value as Boolean)
-                        .apply()
+                preferences.edit().putBoolean(reducerName, value as Boolean).apply()
                 true
             }
             "mvez-add" -> {
                 val success = mvezPreferences.add(value as MVEZ)
                 if (success) {
-                    preferences
-                            .edit()
-                            .putString("mvez", gson.toJson(mvezPreferences))
-                            .apply()
+                    preferences.edit().putString("mvez", gson.toJson(mvezPreferences)).apply()
                 }
                 success
             }
             "mvez-remove" -> {
                 mvezPreferences.remove(value as Int)
+                preferences.edit().putString("mvez", gson.toJson(mvezPreferences)).apply()
                 true
             }
             else -> {
                 throw Error("Invalid preference key!")
-                false
             }
         }
     }

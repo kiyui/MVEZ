@@ -14,7 +14,7 @@ import android.widget.TextView
  * that understands how to populate our `app_item` layout with the data
  * encapsulated inside our `AppDetail` class
  */
-class AppDetailAdapter(context: Context, resource: Int, val apps: List<AppDetail>, var alphabetical: Boolean): ArrayAdapter<AppDetail>(context, resource, apps), SectionIndexer {
+class AppDetailAdapter(context: Context, resource: Int, private val apps: List<AppDetail>, var alphabetical: Boolean): ArrayAdapter<AppDetail>(context, resource, apps), SectionIndexer {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val appView: View = when (convertView == null) {
@@ -34,7 +34,6 @@ class AppDetailAdapter(context: Context, resource: Int, val apps: List<AppDetail
      * We implement section indexer so we can have named scrolling
      */
     override fun getSections(): Array<Any> {
-        // TODO: Review adding alphabetical scrolling instead of names
         val labels: List<CharSequence> = apps
                 .map{ app -> app.label }
                 .map { label ->

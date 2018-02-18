@@ -96,12 +96,12 @@ class SettingsActivity : Activity(), Observer<Action> {
                 val value = t.value as Boolean
                 alphabetical.isChecked = value
                 if (value != manager.get("alphabetical")) {
-                    manager.set("alphabetical", value)
+                    manager.updateState("alphabetical", value)
                 }
             }
             "settings-mvez-add" -> {
                 val mvez = t.value as MVEZ
-                val success = manager.set("mvez-add", mvez)
+                val success = manager.updateState("mvez-add", mvez)
                 when (success) {
                     true -> {
                         mvezPreferenceList.add(mvez.toString())
@@ -115,7 +115,7 @@ class SettingsActivity : Activity(), Observer<Action> {
             }
             "settings-mvez-remove" -> {
                 val index = t.value as Int
-                manager.set("mvez-remove", index)
+                manager.updateState("mvez-remove", index)
                 mvezPreferenceList.removeAt(index)
                 adapter.notifyDataSetChanged()
             }
