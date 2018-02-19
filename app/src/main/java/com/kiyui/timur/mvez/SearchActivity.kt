@@ -14,6 +14,7 @@ import android.widget.GridView
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxAdapterView
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -229,8 +230,10 @@ class SearchActivity: Activity(), Observer<Action> {
                         try {
                             this@SearchActivity.startActivity(intent)
                         } catch ( e: ActivityNotFoundException ) {
-                            // TODO: Show toast to show disappointment
-                            println(e)
+                            Toast.makeText(
+                                    this,
+                                    "Failed to find web search activity",
+                                    Toast.LENGTH_SHORT).show()
                         }
                     }
                     else -> {
@@ -242,8 +245,10 @@ class SearchActivity: Activity(), Observer<Action> {
                         try {
                             this@SearchActivity.startActivity(intent)
                         } catch ( e: ActivityNotFoundException ) {
-                            // TODO: Show toast to show disappointment
-                            println(e)
+                            Toast.makeText(
+                                    this,
+                                    "Failed to launch activity",
+                                    Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
