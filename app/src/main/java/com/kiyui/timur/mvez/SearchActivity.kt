@@ -172,41 +172,6 @@ class SearchActivity: Activity(), Observer<Action> {
                 ))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
-
-        changeAppsStream
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object: Observer<Action> {
-                    override fun onSubscribe(d: Disposable) {
-                        // Populate initial view
-                        appGrid.adapter = adapter
-                    }
-
-                    override fun onNext(t: Action) {
-                        // On update apps, we change out loaded app list
-                        apps = t.value as List<AppDetail>
-                    }
-
-                    override fun onError(e: Throwable) {
-                    }
-
-                    override fun onComplete() {
-                    }
-                })
-
-    }
-
-
-    /**
-     * Handle registration of receiver
-     */
-    override fun onPause() {
-        unregisterReceiver(packageSource)
-        super.onPause()
-    }
-
-    override fun onResume() {
-        registerReceiver(packageSource, filter)
-        super.onResume()
     }
 
     /**
@@ -236,6 +201,7 @@ class SearchActivity: Activity(), Observer<Action> {
     }
 
     override fun onSubscribe(d: Disposable) {
+        appGrid.adapter = adapter
     }
 
     override fun onNext(t: Action) {
