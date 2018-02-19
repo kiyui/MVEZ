@@ -19,7 +19,7 @@ class SettingsActivity : Activity(), Observer<Action> {
     private val manager by lazy { PreferenceManager(getSharedPreferences("MVEZ", Context.MODE_PRIVATE)) }
     private val mvezPreferences by lazy { manager.get("mvez") as MVEZPreferences }
     private val mvezPreferenceList by lazy { mvezPreferences.getLabels().toMutableList() }
-    private val alphabetical by lazy { findViewById<CheckBox>(R.id.settingsAlphabetical) }
+    private val alphabetical by lazy { findViewById<Switch>(R.id.settingsAlphabetical) }
     private val appSpinner by lazy { findViewById<Spinner>(R.id.searchSpinner) }
     private val bangText by lazy { findViewById<EditText>(R.id.bangValue) }
     private val bangButton by lazy { findViewById<Button>(R.id.bangSubmit) }

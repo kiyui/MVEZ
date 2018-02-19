@@ -4,45 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     tools:context="com.kiyui.timur.mvez.SettingsActivity">
 
-    <TextView
-        android:id="@+id/textSettingsScroll"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Scrolling"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:id="@+id/scrollSettings"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="48dp">
 
-    <CheckBox
-        android:id="@+id/settingsAlphabetical"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Use alphabetical menu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textSettingsScroll" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/textSettingsBang"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Bang Search"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsAlphabetical" />
+            <TextView
+                android:id="@+id/scrollTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Scroll Settings"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16dp" />
+
+            <TextView
+                style="@android:style/Widget.Material.TextView"
+                android:layout_below="@id/scrollTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Toggle alphabetical scrolling" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <Switch
+                android:id="@+id/settingsAlphabetical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:showText="false"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
 
     <Spinner
         android:id="@+id/searchSpinner"
@@ -53,7 +62,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textSettingsBang" />
+        app:layout_constraintTop_toBottomOf="@+id/scrollSettings" />
 
     <EditText
         android:id="@+id/bangValue"
