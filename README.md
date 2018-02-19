@@ -1,4 +1,6 @@
 # MVEZ [WIP]
+[![Build Status](https://travis-ci.org/TimurKiyivinski/MVEZ.svg?branch=master)](https://travis-ci.org/TimurKiyivinski/MVEZ)
+
 A reactive search-oriented launcher for Android; Pronounced `move-easy`.
 
 ## about
