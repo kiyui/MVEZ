@@ -4,23 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:padding="16dp"
     tools:context="com.kiyui.timur.mvez.SettingsActivity">
 
     <LinearLayout
         android:id="@+id/scrollSettings"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginTop="48dp">
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_weight="1"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="12dp">
 
             <TextView
                 android:id="@+id/scrollTitle"
@@ -32,9 +31,9 @@
 
             <TextView
                 style="@android:style/Widget.Material.TextView"
-                android:layout_below="@id/scrollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/scrollTitle"
                 android:text="Toggle alphabetical scrolling" />
         </RelativeLayout>
 
@@ -52,28 +51,29 @@
         </LinearLayout>
     </LinearLayout>
 
-
     <Spinner
         android:id="@+id/searchSpinner"
+        style="@android:style/Widget.Material.Spinner.Underlined"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollSettings" />
 
     <EditText
         android:id="@+id/bangValue"
+        style="@android:style/TextAppearance.Material.Widget.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="!Bang shorthand"
+        android:hint="Shortcut"
         android:inputType="textPersonName"
+        android:paddingLeft="12dp"
+        android:textColor="@color/hint_grey"
+        android:textColorHint="@color/text_hint_grey"
         app:layout_constraintEnd_toStartOf="@+id/bangSubmit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchSpinner" />
@@ -82,8 +82,6 @@
         android:id="@+id/bangSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="16dp"
         android:text="Create"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchSpinner" />
@@ -92,9 +90,7 @@
         android:id="@+id/bangList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
