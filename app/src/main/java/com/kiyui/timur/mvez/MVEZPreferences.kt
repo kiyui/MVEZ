@@ -15,8 +15,12 @@ class MVEZPreferences {
         return false
     }
 
-    fun remove (index: Int) {
-        preferences.removeAt(index)
+    fun remove (index: Int): Boolean {
+        if (index > -1 && index < preferences.size) {
+            preferences.removeAt(index)
+            return true
+        }
+        return false
     }
 
     fun getLabels (): List<String> {
