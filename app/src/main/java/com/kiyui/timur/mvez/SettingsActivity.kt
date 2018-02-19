@@ -108,8 +108,10 @@ class SettingsActivity : Activity(), Observer<Action> {
                         adapter.notifyDataSetChanged()
                     }
                     false -> {
-                        // TODO: Show toast
-                        println("Failed to add duplicate mvez")
+                        Toast.makeText(
+                                this,
+                                "Failed to add duplicate mvez",
+                                Toast.LENGTH_SHORT).show()
                     }
                 }
             }
