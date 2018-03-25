@@ -28,10 +28,19 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".SearchActivity"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Material.Light">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kiyui.timur.mvez.SearchActivity" />
+        </activity>
+        <activity
+            android:name=".MVEZActivity"
+            android:label="@string/title_activity_mvez"
+            android:parentActivityName=".SettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.Light">
+
         </activity>
     </application>
 

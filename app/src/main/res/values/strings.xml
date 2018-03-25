@@ -1,6 +1,16 @@
 <resources>
-    <!-- Application strings -->
+    <!-- Title strings -->
     <string name="app_name">MVEZ</string>
-    <string name="search_view_hint">Type something…</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_mvez">MVEZ Settings</string>
+    <!-- Search activity -->
+    <string name="search_view_hint">Type something…</string>
+    <!-- Settings activity -->
+    <string name="settings_scroll_short">Scroll Settings</string>
+    <string name="settings_scroll_description">Toggle alphabetical scrolling</string>
+    <string name="settings_shortcut_short">MVEZ Shortcuts</string>
+    <string name="settings_shortcut_description">Configure bang syntax shortcuts</string>
+    <!-- MVEZ Settings activity -->
+    <string name="settings_shortcut_hint">Shortcut</string>
+    <string name="settings_shortcut_create">Create</string>
 </resources>
