@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="@dimen/settings_padding"
     tools:context="com.kiyui.timur.mvez.SettingsActivity">
 
     <LinearLayout
         android:id="@+id/scrollSettings"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="48dp">
+        android:layout_height="@dimen/settings_item_height"
+        android:layout_marginTop="@dimen/settings_first_margin">
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingLeft="12dp">
+            android:paddingLeft="@dimen/settings_item_padding">
 
             <TextView
                 android:id="@+id/scrollTitle"
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_scroll_short"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16dp" />
+                android:textSize="@dimen/settings_item_text" />
 
             <TextView
                 style="@android:style/Widget.Material.TextView"
@@ -54,8 +54,8 @@
     <LinearLayout
         android:id="@+id/mvezSettings"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="@dimen/settings_item_height"
+        android:layout_marginTop="@dimen/settings_padding"
         app:layout_constraintTop_toBottomOf="@id/scrollSettings">
 
         <RelativeLayout
@@ -64,7 +64,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingLeft="12dp">
+            android:paddingLeft="@dimen/settings_item_padding">
 
             <TextView
                 android:id="@+id/mvezTitle"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_shortcut_short"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16dp" />
+                android:textSize="@dimen/settings_item_text" />
 
             <TextView
                 style="@android:style/Widget.Material.TextView"

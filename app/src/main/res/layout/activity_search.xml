@@ -19,13 +19,13 @@
             android:fastScrollStyle="@android:style/Widget.Material.FastScroll"
             android:scrollbarStyle="outsideOverlay"
             android:overScrollMode="always"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="8dp"
-            android:columnWidth="64dp"
-            android:paddingTop="100dp"
-            android:paddingBottom="48dp"
+            android:paddingTop="@dimen/app_padding_top"
+            android:paddingBottom="@dimen/app_padding_bottom"
+            android:paddingLeft="@dimen/app_padding"
+            android:paddingRight="@dimen/app_padding"
+            android:verticalSpacing="@dimen/app_spacing"
+            android:horizontalSpacing="@dimen/app_spacing"
+            android:columnWidth="@dimen/app_column_width"
             android:clipToPadding="false"/>
     </LinearLayout>
     <LinearLayout
@@ -46,19 +46,18 @@
         <LinearLayout
             android:id="@+id/customActionBar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/search_box_bg"
-            android:layout_marginTop="32dp">
+            android:layout_height="@dimen/searchbar_height"
+            android:layout_marginLeft="@dimen/searchbar_margin"
+            android:layout_marginRight="@dimen/searchbar_margin"
+            android:layout_marginTop="@dimen/searchbar_margin_top"
+            android:background="@drawable/search_box_bg">
 
             <ImageButton
                 android:id="@+id/action_about"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_margin="16dp"
+                android:layout_width="@dimen/searchbtn_size"
+                android:layout_height="@dimen/searchbtn_size"
+                android:layout_margin="@dimen/searchbar_margin"
                 android:background="@null"
-
                 android:src="@drawable/ic_search_black_24dp"
                 android:tint="@color/hint_grey"/>
 
@@ -77,7 +76,7 @@
                 android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textColorHint="@color/text_hint_grey"
-                android:textSize="18sp">
+                android:textSize="@dimen/searchtxt_size">
 
                 <requestFocus/>
             </EditText>
@@ -89,7 +88,7 @@
 
             <ImageButton
                 android:id="@+id/clear_button"
-                android:layout_width="40dp"
+                android:layout_width="@dimen/search_action_width"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:background="@null"
@@ -99,7 +98,7 @@
 
             <ImageButton
                 android:id="@+id/overflow_button"
-                android:layout_width="40dp"
+                android:layout_width="@dimen/search_action_width"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"

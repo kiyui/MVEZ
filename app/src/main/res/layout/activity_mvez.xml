@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="@dimen/settings_padding"
     tools:context="com.kiyui.timur.mvez.MVEZActivity">
 
     <Spinner
@@ -14,19 +14,19 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="48dp"/>
+        android:layout_marginTop="@dimen/settings_first_margin"/>
 
     <EditText
         android:id="@+id/bangValue"
         style="@android:style/TextAppearance.Material.Widget.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/mvez_settings_item_margin"
+        android:layout_marginTop="@dimen/mvez_settings_item_margin"
         android:ems="10"
         android:hint="@string/settings_shortcut_hint"
         android:inputType="textPersonName"
-        android:paddingLeft="12dp"
+        android:paddingLeft="@dimen/settings_item_padding"
         android:textColor="@color/hint_grey"
         android:textColorHint="@color/text_hint_grey"
         app:layout_constraintEnd_toStartOf="@+id/bangSubmit"
@@ -45,7 +45,7 @@
         android:id="@+id/bangList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/mvez_settings_item_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

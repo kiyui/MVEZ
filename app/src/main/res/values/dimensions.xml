@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App item -->
+    <dimen name="icon_width">64dp</dimen>
+    <dimen name="icon_size">48dp</dimen>
+    <dimen name="icon_text_size">12sp</dimen>
+    <!-- Search activity -->
+    <dimen name="app_padding">16dp</dimen>
+    <dimen name="app_spacing">8dp</dimen>
+    <dimen name="app_padding_top">100dp</dimen>
+    <dimen name="app_padding_bottom">64dp</dimen>
+    <dimen name="app_column_width">64dp</dimen>
+    <dimen name="searchbar_height">56dp</dimen>
+    <dimen name="searchbar_margin">16dp</dimen>
+    <dimen name="searchbar_margin_top">32dp</dimen>
+    <dimen name="searchbtn_size">24dp</dimen>
+    <dimen name="searchbtn_margin">16dp</dimen>
+    <dimen name="searchtxt_size">18sp</dimen>
+    <dimen name="search_action_width">40dp</dimen>
+    <!-- Settings activity -->
+    <dimen name="settings_padding">16dp</dimen>
+    <dimen name="settings_first_margin">48dp</dimen>
+    <dimen name="settings_item_height">56dp</dimen>
+    <dimen name="settings_item_padding">12dp</dimen>
+    <dimen name="settings_item_text">16dp</dimen>
+    <!-- MVEZ Settings activity -->
+    <dimen name="mvez_settings_item_margin">8dp</dimen>
+</resources>
