@@ -25,7 +25,7 @@
                 android:id="@+id/scrollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Scroll Settings"
+                android:text="@string/settings_scroll_short"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16dp" />
 
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/scrollTitle"
-                android:text="Toggle alphabetical scrolling" />
+                android:text="@string/settings_scroll_description" />
         </RelativeLayout>
 
         <LinearLayout
@@ -70,7 +70,7 @@
                 android:id="@+id/mvezTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="MVEZ Shortcuts"
+                android:text="@string/settings_shortcut_short"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16dp" />
 
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/mvezTitle"
-                android:text="Configure bang syntax shortcuts" />
+                android:text="@string/settings_shortcut_description" />
         </RelativeLayout>
     </LinearLayout>
 

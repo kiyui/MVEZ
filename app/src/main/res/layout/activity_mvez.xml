@@ -24,7 +24,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="Shortcut"
+        android:hint="@string/settings_shortcut_hint"
         android:inputType="textPersonName"
         android:paddingLeft="12dp"
         android:textColor="@color/hint_grey"
@@ -37,7 +37,7 @@
         android:id="@+id/bangSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
+        android:text="@string/settings_shortcut_create"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchSpinner" />
 
