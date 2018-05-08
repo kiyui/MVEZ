@@ -176,6 +176,15 @@ class SearchActivity: Activity(), Observer<Action> {
     }
 
     /**
+     * Force update apps on resume
+     */
+    /
+    override fun onResume() {
+        super.onResume()
+        setApps(getApps())
+    }
+
+    /**
      * Get applications in alphabetical order
      */
     private fun getApps (): List<AppDetail> {
