@@ -189,7 +189,7 @@ class SearchActivity: Activity(), Observer<Action> {
                     val icon = ri.activityInfo.loadIcon(packageManager)
                     AppDetail(label, name, icon) }
                 .filter { app -> app.name != packageName }
-                .sortedWith(compareBy({it.label as String}))
+                .sortedWith(compareBy({ it -> it.label.toString().toUpperCase()}))
     }
 
     /**
