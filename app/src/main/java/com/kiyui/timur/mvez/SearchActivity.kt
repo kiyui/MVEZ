@@ -178,7 +178,6 @@ class SearchActivity: Activity(), Observer<Action> {
     /**
      * Force update apps on resume
      */
-    /
     override fun onResume() {
         super.onResume()
         setApps(getApps())
