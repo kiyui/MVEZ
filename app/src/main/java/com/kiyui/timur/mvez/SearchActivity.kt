@@ -111,8 +111,9 @@ class SearchActivity: Activity(), Observer<Action> {
                         }
                         false -> {
                             apps.filter { app ->
-                                val label: String = app.label.toString()
-                                label.startsWith(query, true)
+                                // Reduce string into a regex that performs case-insensitive fuzzy searching
+                                val regex = Regex(query.fold("", { acc, c -> "$acc$c.*"}), RegexOption.IGNORE_CASE)
+                                regex.matches(app.label)
                             }
                         }
                     }
