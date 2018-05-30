@@ -276,7 +276,14 @@ class SearchActivity: Activity(), Observer<Action> {
                 // Launch the clicked application
                 val app = adapter.getItem(t.value as Int)
                 val intent = packageManager.getLaunchIntentForPackage(app.name.toString())
-                this@SearchActivity.startActivity(intent)
+                try {
+                    this@SearchActivity.startActivity(intent)
+                } catch ( e: ActivityNotFoundException ) {
+                    Toast.makeText(
+                            this,
+                            "Failed to launch activity",
+                            Toast.LENGTH_SHORT).show()
+                }
             }
             "app-information" -> {
                 // Open details for the application
