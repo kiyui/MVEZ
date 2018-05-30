@@ -42,6 +42,7 @@ class SearchActivity: Activity(), Observer<Action> {
     private val settings by lazy { findViewById<ImageButton>(R.id.overflow_button) }
     private val packageSource = PackageChangeSource()
     private val filter = IntentFilter()
+    private var appList = listOf<AppDetail>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +60,13 @@ class SearchActivity: Activity(), Observer<Action> {
         mvezPreferences = manager.get("mvez") as MVEZPreferences
 
         // Initialize application
-        var apps: List<AppDetail> = getApps()
+        appList = getApps()
 
         // We initialize out adapter with a mutable list since we need to modify it when searching
         adapter = AppDetailAdapter(
                 this,
                 R.layout.app_item,
-                apps.toMutableList(),
+                appList.toMutableList(),
                 manager.get("alphabetical") as Boolean)
 
         // Create an app change broadcast receiver so we have a source
@@ -101,16 +102,16 @@ class SearchActivity: Activity(), Observer<Action> {
         val changeAppsStream: Observable<Action> = packageSource
                 .changeStream
                 .map { _ -> getApps() }
-                .map { newApps -> Action("update-apps", newApps) }
+                .map { newApps -> Action("update-app-list", newApps) }
 
         val filterStream: Observable<Action> = queryStream
                 .map { query ->
                     when (query.isBlank()) {
                         true -> {
-                            apps
+                            appList
                         }
                         false -> {
-                            apps.filter { app ->
+                            appList.filter { app ->
                                 // Reduce string into a regex that performs case-insensitive fuzzy searching
                                 val regex = Regex(query.fold("", { acc, c -> "$acc$c.*"}), RegexOption.IGNORE_CASE)
                                 regex.matches(app.label)
@@ -118,7 +119,7 @@ class SearchActivity: Activity(), Observer<Action> {
                         }
                     }
                 }
-                .map { value -> Action("update-apps", value) }
+                .map { value -> Action("filter-apps", value) }
 
         val searchStream: Observable<Action> = RxTextView
                 .editorActions(search)
@@ -132,7 +133,7 @@ class SearchActivity: Activity(), Observer<Action> {
 
         val clearStream: Observable<Action> = RxView
                 .clicks(clear)
-                .map { _ -> Action("hide-clear", apps) }
+                .map { _ -> Action("hide-clear", appList) }
 
         val appLaunchStream: Observable<Action> = RxAdapterView
                 .itemClickEvents(appGrid)
@@ -155,7 +156,7 @@ class SearchActivity: Activity(), Observer<Action> {
                         alphabeticalPreferenceStream,
                         mvezPreferenceStream,
                         // Actions
-                        filterStream       // update-apps
+                        filterStream       // filter-apps
                 ))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -164,7 +165,7 @@ class SearchActivity: Activity(), Observer<Action> {
         Observable
                 .merge(listOf(
                         // Actions
-                        changeAppsStream,   // update-apps
+                        changeAppsStream,   // update-app-list
                         searchStream,       // mvez-search
                         queryClearStream,   // show-clear
                         clearStream,        // hide-clear
@@ -174,14 +175,6 @@ class SearchActivity: Activity(), Observer<Action> {
                 ))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this)
-    }
-
-    /**
-     * Force update apps on resume
-     */
-    override fun onResume() {
-        super.onResume()
-        setApps(getApps())
     }
 
     /**
@@ -199,12 +192,13 @@ class SearchActivity: Activity(), Observer<Action> {
                     AppDetail(label, name, icon) }
                 .filter { app -> app.name != packageName }
                 .sortedWith(compareBy({ it -> it.label.toString().toUpperCase()}))
+                .toList()
     }
 
     /**
      * Update adapter and view application list
      */
-    private fun setApps (apps: List<AppDetail>) {
+    private fun setAdapterApps (apps: List<AppDetail>) {
         adapter.clear()
         adapter.addAll(apps)
         adapter.notifyDataSetChanged()
@@ -223,9 +217,12 @@ class SearchActivity: Activity(), Observer<Action> {
             "pref-mvez" -> {
                 mvezPreferences = t.value as MVEZPreferences
             }
-            "update-apps" -> {
-                // Update the GridView with a new updateState of applications
-                setApps(t.value as List<AppDetail>)
+            "filter-apps" -> {
+                // Update the GridView with a new list of applications
+                setAdapterApps(t.value as List<AppDetail>)
+            }
+            "update-app-list" -> {
+                appList = t.value as List<AppDetail>
             }
             "mvez-search" -> {
                 val query = t.value as String
@@ -273,7 +270,7 @@ class SearchActivity: Activity(), Observer<Action> {
                 // Clear the current search term and reset application list when clear pressed
                 clear.visibility = View.GONE
                 search.text.clear()
-                setApps(t.value as List<AppDetail>)
+                setAdapterApps(t.value as List<AppDetail>)
             }
             "app-launch" -> {
                 // Launch the clicked application
